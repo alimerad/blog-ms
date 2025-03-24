@@ -1,0 +1,67 @@
+services:
+  database:
+    image: postgres:15
+    container_name: database
+    ports:
+      - "5436:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: blogdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  users-service:
+    build: ./microservices/users-service
+    container_name: users-service
+    ports:
+      - "3001:3000"
+    env_file:
+      - .env.ms
+    depends_on:
+      - database
+
+  posts-service:
+    build: ./microservices/posts-service
+    container_name: posts-service
+    ports:
+      - "3002:3000"
+    env_file:
+      - .env.ms
+
+    depends_on:
+      - users-service
+
+
+  comments-service:
+    build: ./microservices/comments-service
+    container_name: comments-service
+    ports:
+      - "3003:3000"
+    env_file:
+      - .env.ms
+    depends_on:
+      - posts-service
+      - users-service
+
+
+  api-gateway:
+    container_name: api-gateway
+    build: ./microservices/api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - users-service
+      - posts-service
+      - comments-service
+
+  front-end:
+    build: ./front-end
+    container_name: front-client
+    ports:
+      - "3000:3000"
+    environment:
+      - API_URL=http://api-gateway:8080
+
+volumes:
+  pgdata:

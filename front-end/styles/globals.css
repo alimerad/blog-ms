@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Personnalisation ou styles supplémentaires */
+html,
+body,
+#__next {
+  @apply min-h-full;
+}
+
+body {
+  background-color: #d6d3d1;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Exemple de classe personnalisée */
+.test {
+  color: yellow;
+}
